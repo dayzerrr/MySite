@@ -1,0 +1,45 @@
+.menu {
+	position: relative;
+	height: 75%;
+	width: 90%;
+	top: 5%;
+	left: 5%;
+	background-color: cadetblue;
+	border-radius: 7px;
+}
+
+.button {
+	position: relative;
+	height: 15%;
+	border-radius: 25px;
+	background-color: aqua;
+	margin: 15px;
+	text-align:center;
+	font-size: 175%;
+	
+}
+
+.main {
+	height: 90%;
+	width: 90%;
+	background-color: skyblue;
+	position: absolute;
+	top: 5%;
+	right: 5%;
+	border: 3px;
+	opacity: 0.95;
+	border-radius: 35px;
+	box-shadow: 6px 6px 18px rgba(0, 0, 0, 0, 25);
+}
+
+body {
+
+	background-image: url(images/sea_fon.jpeg);
+	background-size: cover;
+	background-attachment: fixed;
+	/*изображение фиксируется*/
+	text-align: center;
+	font-size: 125%;
+	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+
+}
