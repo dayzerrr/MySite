@@ -1,3 +1,9 @@
+.container{
+	display: grid;
+	grid-template-columns: repeat(8,1fr);
+}
+
+
 .menu {
 	position: relative;
 	height: 75%;
@@ -8,15 +14,42 @@
 	border-radius: 7px;
 }
 
-.button {
+.buttonBack{
+	top: 25%;
 	position: relative;
+	height: 5%;
+	border-radius: 25px;
+	background-color: aqua;
+	margin: 15px;
+	text-align:center;
+	font-size: 175%;
+	box-shadow: 3px 3px 3px ;
+}
+
+.button {
+	
+	position: sticky;
 	height: 15%;
 	border-radius: 25px;
 	background-color: aqua;
 	margin: 15px;
 	text-align:center;
 	font-size: 175%;
+	box-shadow: 3px 3px 3px ;
+
+}
+
+.game{
 	
+	box-shadow: 3px 3px 3px ;
+	display: inline-block;
+	margin: 20px;
+	position: flex;
+	height: 40%;
+	width: 40%;
+	top: 15%;
+	background-color: red;
+	border-radius: 15px;
 }
 
 .main {
@@ -33,7 +66,6 @@
 }
 
 body {
-
 	background-image: url(images/sea_fon.jpeg);
 	background-size: cover;
 	background-attachment: fixed;
