@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+
 let startgame = false;
 let isHadlerPlayer = false;
 let isHadlerControler = false;

@@ -1,3 +1,9 @@
+a{
+	position: relative;
+	top: 30%;
+	text-decoration: none;
+}
+
 .container{
 	display: grid;
 	grid-template-columns: repeat(8,1fr);
@@ -17,7 +23,7 @@
 .buttonBack{
 	top: 25%;
 	position: relative;
-	height: 5%;
+	height: 10%;
 	border-radius: 25px;
 	background-color: aqua;
 	margin: 15px;
@@ -26,17 +32,22 @@
 	box-shadow: 3px 3px 3px ;
 }
 
-.button {
-	
+
+.buttonMenu {
+	color: white;
 	position: sticky;
 	height: 15%;
+	min-width: 400px;
 	border-radius: 25px;
-	background-color: aqua;
+	background-color: blue;
 	margin: 15px;
 	text-align:center;
 	font-size: 175%;
 	box-shadow: 3px 3px 3px ;
-
+	cursor: pointer;
+}
+.button:hover{
+	border: black;
 }
 
 .game{
@@ -69,9 +80,25 @@ body {
 	background-image: url(images/sea_fon.jpeg);
 	background-size: cover;
 	background-attachment: fixed;
-	/*изображение фиксируется*/
 	text-align: center;
 	font-size: 125%;
 	font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 
+}
+
+
+button {
+	
+	background: #1d49aa;
+	color: white;
+	font-family: inherit;
+	min-width: 50px;
+	border-radius: 15px;
+	padding: 10px 18px;
+	font-size: 16px;
+  }
+
+button:hover{
+	background: white;
+	color: #1d49aa;
 }

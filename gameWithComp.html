@@ -11,21 +11,21 @@
 <body>
     <div class="main">
         <h1>Морской Бой</h1>
-        
-        <div class="game">
-
-        </div>
-        <div class="game">
-
-        </div>
+        <table id="board"></table>
+        <button class="buttonPlay" onclick="CreateField()">Начать игру</button>
         <br>
-        <div class="buttonBack">
-            <a href="play.html">Назад</a>
+        <div class="game">
+        </div>
+        <div class="game">
+
+        </div>
+        <form action="play.html">
+            <button class="buttonMenu">Назад</button>
+        </form>
         </div>
     </div>
-    <script src = "java.js">
-        
-    </script>
+    <script src = "gameField.js"></script>
+    <script src = "java.js"></script>
 </body>
 
 </html>
