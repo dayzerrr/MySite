@@ -9,23 +9,18 @@
 </head>
 
 <body>
-    <div class="main">
-        <h1>Морской Бой</h1>
-        <table id="board"></table>
-        <button class="buttonPlay" onclick="CreateField()">Начать игру</button>
-        <br>
-        <div class="game">
-        </div>
-        <div class="game">
-
-        </div>
-        <form action="play.html">
-            <button class="buttonMenu">Назад</button>
-        </form>
-        </div>
-    </div>
     <script src = "gameField.js"></script>
-    <script src = "java.js"></script>
+    <script>
+        function runGame(startImmediatly) {
+             var game = new SeeBattle('gameArea');
+             game.run();
+
+             // fallback для htmlpreview
+             if (startImmediatly) {
+                game.startNewGame();
+             }
+        }
+        </script>
 </body>
 
 </html>
