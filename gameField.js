@@ -39,7 +39,8 @@ function ProtoPlayer(Name) {
         3: 2, //двухпалубные
         4: 1 //однопалубные
     }
-    this.Area
+    this.Area,
+        this.ships = []
 }
 
 ProtoPlayer.prototype = {
@@ -49,6 +50,7 @@ ProtoPlayer.prototype = {
         return true;
     },
     // функция создания поля для прото-игрока
+    // Функция создания поля для прото-игрока
     createField: function () {
         const FieldFront = document.createElement("table");
         FieldFront.id = this.name + "Field";
@@ -62,9 +64,7 @@ ProtoPlayer.prototype = {
 
         let FieldBack = [];
 
-
         for (let i = 0; i < this.fieldSize; i++) {
-
             const columnLetter = document.createElement("th");
             columnLetter.textContent = this.letters[i];
             FieldHeaderRow.appendChild(columnLetter);
@@ -73,87 +73,93 @@ ProtoPlayer.prototype = {
             row.innerHTML = `<th>${i + 1}</th>`; // номер строки
             row.id = `${i}`;
 
-
             FieldBack.push([]);
             for (let j = 0; j < this.fieldSize; j++) {
-                FieldBack[i].push('0'); // 0 будет говорить о том, что в этой клетке нет корабля
 
+                FieldBack[i][j] = '0'; // 0 будет говорить о том, что в этой клетке нет корабля
+                console.log("i: " + i + " j: " + j)
                 // Создание ячеек для прото-игрока
                 let cell = document.createElement("td");
-                cell.id = `${10 * i + j}`;
+                cell.classList.add("cell");
+                cell.dataset.rowIndex = `${i}`;
+                cell.dataset.columnIndex = `${j}`;
                 row.appendChild(cell);
             }
-            FieldFront.appendChild(row);
+            FieldFront.appendChild(row)
         }
 
-
-        this.Area = FieldBack;
+        this.Area = FieldBack; // Присваиваем значения FieldBack переменной Area
+        console.log(this.Area);
     },
-    // функция для размещения 
-    placeShipAuto: function (shipSize) {
-        while (true) {
-            let row = Math.floor(Math.random() * this.fieldSize);
-            let col = Math.floor(Math.random() * this.fieldSize);
-            let orientation = Math.random() < 0.5 ? 'horizontal' : 'vertical';
-
-            if (orientation === 'horizontal') {
-                if (col + shipSize > this.fieldSize) {
+    //Функция автоматического размещения кора
+    placeShipsAutomatically: function () {
+        for (let shipType in this.ShipConf) {
+            let shipCount = this.ShipConf[shipType];
+            console.log("shipType " + shipType)
+            console.log("shipCount " + shipCount)
+            while (shipCount > 0) {
+                let rowIndex = getRandomInt(this.fieldSize);
+                let colIndex = getRandomInt(this.fieldSize);
+                console.log(rowIndex)
+                console.log(colIndex)
+                let isVertical = Math.random() < 0.5; // генерация случайного направления корабля
+                if (this.isValidPosition(rowIndex, colIndex)) {
+                    if (this.isValidShipPlacement(shipType, rowIndex, colIndex, isVertical)) {
+                        this.placeShip(shipType, rowIndex, colIndex, isVertical);
+                        shipCount--;
+                    }
+                }
+            }
+            console.log(this.Area);
+        }
+    },
+    // Проверка, является ли размещение корабля на поле допустимым
+    isValidShipPlacement: function (shipType, rowIndex, colIndex, isVertical) {
+        console.log("isValidShipPlacement")
+        for (let i = rowIndex - 1; i <= rowIndex + (shipType) * (isVertical) + 1 * (1 - isVertical); i++) {
+            console.log("Проверка строки " + i)
+            if (i < 0 || i >= this.fieldSize) {
+                continue;
+            }
+            for (let j = colIndex - 1; j <= colIndex + shipType * (1 - isVertical) + 1 * (isVertical); j++) {
+                console.log("... колонки " + j)
+                if (j < 0 || j >= this.fieldSize) {
                     continue;
                 }
-                else {
-                    for (let i = 0; i < shipSize; i++) {
-                        if (!this.isValidPosition(row, col + i)) {
-                            break;
-                        }
-                    }
-                    console.log("shipSize:"+shipSize);
-                    for (let j = 0; j < shipSize; j++) {
-                        this.Area[row][col + j] = "1";
-                        let cellOfShip = document.getElementById(`${10 * row + col + j}`);
-                        console.log("cellOfShip:"+cellOfShip);
-                        console.log("cellOfShip.id:"+cellOfShip.id);
-                        
-
-                    }
-                    break;
+                if (this.Area[i][j] !== '0') {
+                    return false;
                 }
             }
-            else {
-                console.log("vertical")
-                if (row + shipSize > this.fieldSize) {
-                    continue;
-                }
-                else {
 
-                    for (let i = 0; i < shipSize; i++) {
-                        if (!this.isValidPosition(row + i, col)) {
-                            break;
-                        }
-                    }
-                    for (let i = 0; i < shipSize; i++) {
-                        this.Area[row + i][col] = "1";
-                    }
-                }
+        }
+
+        return true;
+    },
+    // Размещение корабля на поле
+    placeShip: function (shipType, rowIndex, colIndex, isVertical) {
+        console.log("placeShip")
+        if (isVertical) {
+            console.log(typeof shipType)
+            console.log(typeof Number(shipType))
+            for (let i = rowIndex; i < Number(shipType) + rowIndex; i++) {
+                console.log("vert " + "i: " + i + " row + shipType : " + rowIndex + Number(shipType))
+                this.Area[i][colIndex] = shipType.toString();
+                this.ships.push({ row: i, col: colIndex, type: shipType.toString() });
+            }
+        } else {
+            for (let j = colIndex; j < colIndex + Number(shipType); j++) {
+
+                console.log("hor " + "i: " + j + " col+ shipType : " + colIndex + Number(shipType))
+                this.Area[rowIndex][j] = shipType.toString();
+                this.ships.push({ row: rowIndex, col: j, type: shipType.toString() });
             }
         }
-        
-    console.log(this.Area);
-    },
-    GenerateField: function () {
-        this.createField();
-        for (let shipSize in this.ShipConf) {
-            if (this.ShipConf.hasOwnProperty(shipSize)) {
-                for (let i = 0; i < this.ShipConf[shipSize]; i++) {
-                    this.placeShipAuto(parseInt(shipSize));
-                }
-            }
-        }
-    },
-    placeShip: function (shipSize) {
-
     }
+};
 
-
+// Функция для получения случайного числа в заданном диапазоне
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
 }
 
 function GenerateFieldS() {
@@ -161,10 +167,9 @@ function GenerateFieldS() {
     // Вызов функции для создания полей игрока и компьютера
     let Player = new ProtoPlayer("player");
     let Computer = new ProtoPlayer("computer");
-    Player.GenerateField();
-    
-    console.log(Player.Area);
-    Computer.GenerateField();
-
+    Player.createField();
+    Computer.createField();
+    Player.placeShipsAutomatically();
+    Computer.placeShipsAutomatically();
 
 }
