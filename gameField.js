@@ -45,8 +45,8 @@ function ProtoPlayer(Name) {
 
 ProtoPlayer.prototype = {
     isValidPosition: function (row, col) {
+        console.log("... функция isValidPosition")
         if (row < 0 || col < 0 || row >= this.fieldSize || col >= this.fieldSize) { return false; }
-        if (this.Area[row][col] !== '0') { return false; } //проверка, если ли в этой клетке корабль
         return true;
     },
     // функция создания поля для прото-игрока
@@ -95,19 +95,19 @@ ProtoPlayer.prototype = {
     placeShipsAutomatically: function () {
         for (let shipType in this.ShipConf) {
             let shipCount = this.ShipConf[shipType];
-            console.log("shipType " + shipType)
-            console.log("shipCount " + shipCount)
+            console.log("Палуб в коробле " + shipType)
+            console.log("Количество, оставшихся для резмещения " + shipCount)
             while (shipCount > 0) {
                 let rowIndex = getRandomInt(this.fieldSize);
                 let colIndex = getRandomInt(this.fieldSize);
-                console.log(rowIndex)
-                console.log(colIndex)
+                console.log("rowIndex: " + rowIndex)
+                console.log("colIndex: " + colIndex)
                 let isVertical = Math.random() < 0.5; // генерация случайного направления корабля
-                if (this.isValidPosition(rowIndex, colIndex)) {
-                    if (this.isValidShipPlacement(shipType, rowIndex, colIndex, isVertical)) {
-                        this.placeShip(shipType, rowIndex, colIndex, isVertical);
-                        shipCount--;
-                    }
+                console.log("вертикально: " + isVertical)
+                if (this.isValidShipPlacement(shipType, rowIndex, colIndex, isVertical)) {
+                    this.placeShip(Number(shipType), rowIndex, colIndex, isVertical);
+                    shipCount--;
+                    console.log("-------------------------------")
                 }
             }
             console.log(this.Area);
@@ -115,9 +115,19 @@ ProtoPlayer.prototype = {
     },
     // Проверка, является ли размещение корабля на поле допустимым
     isValidShipPlacement: function (shipType, rowIndex, colIndex, isVertical) {
-        console.log("isValidShipPlacement")
+        console.log("...isValidShipPlacement")
+
         for (let i = rowIndex - 1; i <= rowIndex + (shipType) * (isVertical) + 1 * (1 - isVertical); i++) {
             console.log("Проверка строки " + i)
+
+            if (rowIndex <= i & i <= (rowIndex + shipType * (isVertical))) {
+                console.log("..., в которой находится корабль")
+                for (let j = colIndex; j <= colIndex + shipType * (1 - isVertical); j++) {
+                    console.log("... проверка столбца, в которой находится корабль")
+                    if (!this.isValidPosition(i, j))
+                        return false;
+                }
+            }
             if (i < 0 || i >= this.fieldSize) {
                 continue;
             }
@@ -139,19 +149,18 @@ ProtoPlayer.prototype = {
     placeShip: function (shipType, rowIndex, colIndex, isVertical) {
         console.log("placeShip")
         if (isVertical) {
-            console.log(typeof shipType)
-            console.log(typeof Number(shipType))
             for (let i = rowIndex; i < Number(shipType) + rowIndex; i++) {
-                console.log("vert " + "i: " + i + " row + shipType : " + rowIndex + Number(shipType))
-                this.Area[i][colIndex] = shipType.toString();
-                this.ships.push({ row: i, col: colIndex, type: shipType.toString() });
+                console.log("vert " + "i: " + i + " row + shipType : " + (rowIndex + Number(shipType)))
+                this.Area[i][colIndex] = String(shipType);
+                this.ships.push({ row: i, col: colIndex, type: shipType });
+
             }
         } else {
             for (let j = colIndex; j < colIndex + Number(shipType); j++) {
 
-                console.log("hor " + "i: " + j + " col+ shipType : " + colIndex + Number(shipType))
-                this.Area[rowIndex][j] = shipType.toString();
-                this.ships.push({ row: rowIndex, col: j, type: shipType.toString() });
+                console.log("hor " + "i: " + j + " col+ shipType : " + (colIndex + Number(shipType)))
+                this.Area[rowIndex][j] = String(shipType);
+                this.ships.push({ row: rowIndex, col: j, type: shipType });
             }
         }
     }
