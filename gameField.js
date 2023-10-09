@@ -14,7 +14,7 @@ divMain.appendChild(divGameArea);
 let buttonGenerate = document.createElement("button");
 buttonGenerate.textContent = "Cгенерировать поле";
 buttonGenerate.className = "buttonGenerate";
-buttonGenerate.addEventListener("click", main);
+buttonGenerate.addEventListener("click", GenerateFieldS);
 divGameArea.appendChild(buttonGenerate);
 
 
@@ -28,15 +28,6 @@ divMain.appendChild(form);
 
 
 
-
-function main() {
-    // ПОТОМ ЭТО НУЖНО СДЕЛАТЬ В БОЛЕЕ КРАСИВОМ ВИДЕ
-    // До сюда
-    let {player, computer} =  GenerateFieldS()
-    Place(player,computer)
-    console.log(player)
-    console.log(computer)
-}
 
 function ProtoPlayer(Name) {
     this.name = Name;
@@ -55,6 +46,7 @@ function ProtoPlayer(Name) {
 ProtoPlayer.prototype = {
     isValidPosition: function (row, col) {
         if (row < 0 || col < 0 || row >= this.fieldSize || col >= this.fieldSize) { return false; }
+        if (this.Area[row][col] !== '0') { return false; } //проверка, если ли в этой клетке корабль
         return true;
     },
     // функция создания поля для прото-игрока
@@ -71,7 +63,7 @@ ProtoPlayer.prototype = {
         divGameArea.appendChild(FieldFront);
 
         let FieldBack = [];
-        let Cells = [];
+
         for (let i = 0; i < this.fieldSize; i++) {
             const columnLetter = document.createElement("th");
             columnLetter.textContent = this.letters[i];
@@ -89,7 +81,6 @@ ProtoPlayer.prototype = {
                 // Создание ячеек для прото-игрока
                 let cell = document.createElement("td");
                 cell.classList.add("cell");
-                cell.id = (this.name == "player") * 100 + 10 * i + j;
                 cell.dataset.rowIndex = `${i}`;
                 cell.dataset.columnIndex = `${j}`;
                 row.appendChild(cell);
@@ -100,34 +91,38 @@ ProtoPlayer.prototype = {
         this.Area = FieldBack; // Присваиваем значения FieldBack переменной Area
         console.log(this.Area);
     },
-    //Функция автоматического размещения кораблей
+    //Функция автоматического размещения кора
     placeShipsAutomatically: function () {
         for (let shipType in this.ShipConf) {
             let shipCount = this.ShipConf[shipType];
+            console.log("shipType " + shipType)
+            console.log("shipCount " + shipCount)
             while (shipCount > 0) {
                 let rowIndex = getRandomInt(this.fieldSize);
                 let colIndex = getRandomInt(this.fieldSize);
+                console.log(rowIndex)
+                console.log(colIndex)
                 let isVertical = Math.random() < 0.5; // генерация случайного направления корабля
-                if (this.isValidShipPlacement(shipType, rowIndex, colIndex, isVertical)) {
-                    this.placeShip(Number(shipType), rowIndex, colIndex, isVertical);
-                    shipCount--;
+                if (this.isValidPosition(rowIndex, colIndex)) {
+                    if (this.isValidShipPlacement(shipType, rowIndex, colIndex, isVertical)) {
+                        this.placeShip(shipType, rowIndex, colIndex, isVertical);
+                        shipCount--;
+                    }
                 }
             }
+            console.log(this.Area);
         }
     },
     // Проверка, является ли размещение корабля на поле допустимым
     isValidShipPlacement: function (shipType, rowIndex, colIndex, isVertical) {
+        console.log("isValidShipPlacement")
         for (let i = rowIndex - 1; i <= rowIndex + (shipType) * (isVertical) + 1 * (1 - isVertical); i++) {
-            if (rowIndex <= i & i <= (rowIndex + shipType * (isVertical))) {
-                for (let j = colIndex; j <= colIndex + shipType * (1 - isVertical); j++) {
-                    if (!this.isValidPosition(i, j))
-                        return false;
-                }
-            }
+            console.log("Проверка строки " + i)
             if (i < 0 || i >= this.fieldSize) {
                 continue;
             }
             for (let j = colIndex - 1; j <= colIndex + shipType * (1 - isVertical) + 1 * (isVertical); j++) {
+                console.log("... колонки " + j)
                 if (j < 0 || j >= this.fieldSize) {
                     continue;
                 }
@@ -135,28 +130,28 @@ ProtoPlayer.prototype = {
                     return false;
                 }
             }
+
         }
+
         return true;
     },
     // Размещение корабля на поле
     placeShip: function (shipType, rowIndex, colIndex, isVertical) {
+        console.log("placeShip")
         if (isVertical) {
+            console.log(typeof shipType)
+            console.log(typeof Number(shipType))
             for (let i = rowIndex; i < Number(shipType) + rowIndex; i++) {
-                this.Area[i][colIndex] = String(shipType);
-                this.ships.push({ row: i, col: colIndex, type: shipType });
-                if (this.name == "player") {
-                    let c = (document.getElementById(100 + i * 10 + colIndex))
-                    c.style.background = "blue";
-                }
+                console.log("vert " + "i: " + i + " row + shipType : " + rowIndex + Number(shipType))
+                this.Area[i][colIndex] = shipType.toString();
+                this.ships.push({ row: i, col: colIndex, type: shipType.toString() });
             }
         } else {
             for (let j = colIndex; j < colIndex + Number(shipType); j++) {
-                this.Area[rowIndex][j] = String(shipType);
-                this.ships.push({ row: rowIndex, col: j, type: shipType });
-                if (this.name == "player") {
-                    let c = (document.getElementById(100 + rowIndex * 10 + j))
-                    c.style.background = "blue";
-                }
+
+                console.log("hor " + "i: " + j + " col+ shipType : " + colIndex + Number(shipType))
+                this.Area[rowIndex][j] = shipType.toString();
+                this.ships.push({ row: rowIndex, col: j, type: shipType.toString() });
             }
         }
     }
@@ -167,16 +162,14 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-function GenerateFieldS(pl, com) {
-    pl = new ProtoPlayer("player"), com = new ProtoPlayer("computer")
-    pl.createField();
-    com.createField();
-    let butGen = document.getElementsByClassName("buttonGenerate")
-    console.log(butGen)
-    buttonGenerate.textContent = "Перезапустить игру"
-    return {player:pl,computer:com}
-}
-function Place(p, com) {
-    p.placeShipsAutomatically()
-    com.placeShipsAutomatically()
+function GenerateFieldS() {
+    divGameArea.removeChild(buttonGenerate);
+    // Вызов функции для создания полей игрока и компьютера
+    let Player = new ProtoPlayer("player");
+    let Computer = new ProtoPlayer("computer");
+    Player.createField();
+    Computer.createField();
+    Player.placeShipsAutomatically();
+    Computer.placeShipsAutomatically();
+
 }
